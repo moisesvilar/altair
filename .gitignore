@@ -9,9 +9,6 @@
 composer.phar
 composer.lock
 
-# External libraries
-lib/database/
-
 # IDE files
 .cursor/
 .vscode/

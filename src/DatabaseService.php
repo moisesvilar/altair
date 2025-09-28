@@ -3,7 +3,7 @@
 namespace MiProyecto;
 
 use DatabaseLibrary\DatabaseManager;
-use DatabaseLibrary\Utils\EnvLoader;
+use Utils\EnvLoader;
 
 class DatabaseService
 {
