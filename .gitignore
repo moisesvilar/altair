@@ -13,6 +13,7 @@ composer.lock
 lib/database/
 
 # IDE files
+.cursor/
 .vscode/
 .idea/
 *.swp
