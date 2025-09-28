@@ -10,7 +10,7 @@ composer.phar
 composer.lock
 
 # External libraries
-lib/database
+lib/database/
 
 # IDE files
 .vscode/
