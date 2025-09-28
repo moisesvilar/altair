@@ -1,0 +1,3 @@
+[submodule "php-supabase-database-library"]
+	path = php-supabase-database-library
+	url = https://github.com/moisesvilar/php-supabase-database-library.git
