@@ -14,7 +14,7 @@ class AltairService
 
     public function __construct()
     {
-        $this->logger = new Logger('AltairDatabase');
+        $this->logger = new Logger(__DIR__ . '/../../logs/altair-service.log', true);
         
         try {
             // Initialize AuthService
@@ -54,6 +54,30 @@ class AltairService
             return $result;
         } catch (\Exception $e) {
             $this->logger->error("Sign up failed for email {$email}: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    /**
+     * Sign in an existing user
+     *
+     * @param string $email User's email
+     * @param string $password User's password
+     * @return array Authentication result with user data and tokens
+     * @throws \Exception If an error occurs during sign in
+     */
+    public function signIn(string $email, string $password): array
+    {
+        try {
+            $this->logger->info("Attempting to sign in user with email: {$email}");
+            
+            $result = $this->authService->signIn($email, $password);
+            
+            $this->logger->info("User signed in successfully: {$email}");
+            
+            return $result;
+        } catch (\Exception $e) {
+            $this->logger->error("Sign in failed for email {$email}: " . $e->getMessage());
             throw $e;
         }
     }
@@ -178,7 +202,10 @@ class AltairService
             }
             
             // Create UserProfile with email from auth data
-            $userProfile = UserProfile::fromArray($profileResult[0]);
+            $profileData = $profileResult[0];
+            $profileData['email'] = $email; // Add email from auth to profile data
+            
+            $userProfile = UserProfile::fromArray($profileData);
             
             $this->logger->info("Complete user info retrieved successfully for user: {$userId}");
             

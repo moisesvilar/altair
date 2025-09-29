@@ -23,7 +23,7 @@ return [
         'name' => EnvLoader::get('SUPABASE_PROJECT_NAME', 'Database Project'),
     ],
     'logging' => [
-        'file' => EnvLoader::get('LOG_FILE', 'database.log'),
+        'file' => EnvLoader::get('LOG_FILE', 'logs/database.log'),
         'level' => EnvLoader::get('LOG_LEVEL', 'INFO'),
         'enabled' => EnvLoader::bool('LOG_ENABLED', true),
         'max_size' => EnvLoader::int('LOG_MAX_SIZE', 10485760), // 10MB

@@ -17,12 +17,13 @@ class AuthService
         EnvLoader::load();
         
         // Load auth configuration
-        $this->config = require __DIR__ . '/../config/auth.php';
+        $this->config = require __DIR__ . '/../../config/auth.php';
         
         // Create Supabase Auth instance
         $this->auth = new SupabaseAuth(
             EnvLoader::required('SUPABASE_AUTH_URL'),
-            EnvLoader::required('SUPABASE_API_KEY')
+            EnvLoader::required('SUPABASE_API_KEY'),
+            EnvLoader::get('SUPABASE_SERVICE_ROLE_KEY')
         );
     }
 

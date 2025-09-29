@@ -66,8 +66,27 @@ spl_autoload_register(function ($class) {
     }
 
     $relative_class = substr($class, $len);
+    
+    // Map of class names to their actual file locations
+    $class_map = [
+        'AltairService' => 'services/AltairService.php',
+        'AuthService' => 'services/AuthService.php', 
+        'DatabaseService' => 'services/DatabaseService.php',
+        'UserProfile' => 'entities/UserProfile.php',
+        'AuthResult' => 'entities/AuthResult.php'
+    ];
+    
+    // Check if class is in our map
+    if (isset($class_map[$relative_class])) {
+        $file = $base_dir . $class_map[$relative_class];
+        if (file_exists($file)) {
+            require $file;
+            return;
+        }
+    }
+    
+    // Fallback to standard PSR-4 autoloading
     $file = $base_dir . str_replace('\\', '/', $relative_class) . '.php';
-
     if (file_exists($file)) {
         require $file;
     }

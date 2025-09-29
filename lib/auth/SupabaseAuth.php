@@ -8,12 +8,14 @@ class SupabaseAuth implements Auth
 {
     private string $supabaseUrl;
     private string $supabaseKey;
+    private ?string $serviceRoleKey;
     private string $apiUrl;
 
-    public function __construct($supabaseUrl, $supabaseKey)
+    public function __construct($supabaseUrl, $supabaseKey, $serviceRoleKey = null)
     {
         $this->supabaseUrl = rtrim($supabaseUrl, '/');
         $this->supabaseKey = $supabaseKey;
+        $this->serviceRoleKey = $serviceRoleKey;
         $this->apiUrl = $this->supabaseUrl . '/auth/v1';
     }
 
@@ -163,11 +165,15 @@ class SupabaseAuth implements Auth
     {
         // Note: Supabase Auth API requires admin access to get user by ID
         // This uses the admin endpoint which requires service_role key
+        if (!$this->serviceRoleKey) {
+            throw new \Exception("Service role key is required for admin operations");
+        }
+        
         $adminUrl = $this->supabaseUrl . '/auth/v1/admin/users/' . $userId;
         
         $headers = [
-            'apikey: ' . $this->supabaseKey,
-            'Authorization: Bearer ' . $this->supabaseKey,
+            'apikey: ' . $this->serviceRoleKey,
+            'Authorization: Bearer ' . $this->serviceRoleKey,
             'Content-Type: application/json',
             'Accept: application/json'
         ];

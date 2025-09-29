@@ -19,7 +19,7 @@ class Logger
     ];
 
     public function __construct(
-        string $logFile = 'database.log',
+        string $logFile = 'logs/database.log',
         bool $enabled = true,
         string $logLevel = 'INFO',
         int $maxFileSize = 10485760, // 10MB
