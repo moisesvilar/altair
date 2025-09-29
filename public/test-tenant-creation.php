@@ -70,6 +70,31 @@ try {
     $tenantArray = $retrievedTenant->toArray();
     echo json_encode($tenantArray, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . "\n\n";
 
+    // Update tenant name
+    echo "7. Actualizando nombre del tenant...\n";
+    $newTenantName = 'Pero veré que puedo hacer';
+    echo "   Nuevo nombre: {$newTenantName}\n";
+    
+    $updatedTenant = $altairService->updateTenant($retrievedTenant->id, $newTenantName);
+    
+    echo "✓ Tenant actualizado exitosamente\n\n";
+
+    // Display updated tenant data
+    echo "8. DATOS DEL TENANT ACTUALIZADO:\n";
+    echo "========================================\n";
+    echo "ID: {$updatedTenant->id}\n";
+    echo "Nombre: {$updatedTenant->name}\n";
+    echo "Slug: {$updatedTenant->slug}\n";
+    echo "Creado en: {$updatedTenant->createdAt}\n";
+    echo "Actualizado en: {$updatedTenant->updatedAt}\n";
+    echo "Creado por: {$updatedTenant->createdBy}\n";
+    echo "========================================\n\n";
+
+    // Convert updated tenant to array and display formatted
+    echo "9. DATOS ACTUALIZADOS EN FORMATO ARRAY:\n";
+    $updatedTenantArray = $updatedTenant->toArray();
+    echo json_encode($updatedTenantArray, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . "\n\n";
+
     echo "✓ Prueba completada exitosamente\n";
 
 } catch (\Exception $e) {

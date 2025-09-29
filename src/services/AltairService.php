@@ -300,4 +300,68 @@ class AltairService
             throw new \RuntimeException("Failed to get tenant: " . $e->getMessage(), 0, $e);
         }
     }
+
+    /**
+     * Update tenant name and automatically regenerate slug
+     *
+     * @param int $tenantId Tenant ID to update
+     * @param string $newName New tenant name
+     * @return Tenant Updated tenant data
+     * @throws \Exception If an error occurs during the operation
+     */
+    public function updateTenant(int $tenantId, string $newName): Tenant
+    {
+        try {
+            $this->logger->info("Updating tenant with ID: {$tenantId} to name: {$newName}");
+            
+            // Check if tenant exists
+            $existingTenant = $this->getTenantById($tenantId);
+            if ($existingTenant === null) {
+                throw new \RuntimeException("Tenant with ID {$tenantId} not found");
+            }
+            
+            // Generate new slug from new name
+            $newSlug = Tenant::generateSlug($newName);
+            
+            // Check if the new slug conflicts with another tenant (excluding current one)
+            $conflictQuery = "SELECT id FROM tenants WHERE slug = :slug AND id != :id LIMIT 1";
+            $conflictResult = $this->databaseService->query($conflictQuery, [
+                'slug' => $newSlug,
+                'id' => $tenantId
+            ]);
+            
+            if (!empty($conflictResult)) {
+                throw new \RuntimeException("A tenant with slug '{$newSlug}' already exists");
+            }
+            
+            // Prepare update data
+            $updateData = [
+                'name' => $newName,
+                'slug' => $newSlug,
+                'updated_at' => date('Y-m-d H:i:s')
+            ];
+            
+            // Update tenant
+            $affectedRows = $this->databaseService->update('tenants', $updateData, ['id' => $tenantId]);
+            
+            if ($affectedRows === 0) {
+                throw new \RuntimeException("No rows were updated. Tenant might not exist or data is identical.");
+            }
+            
+            $this->logger->info("Tenant updated successfully: ID {$tenantId}, new name: {$newName}, new slug: {$newSlug}");
+            
+            // Get updated tenant data
+            $updatedTenant = $this->getTenantById($tenantId);
+            
+            if ($updatedTenant === null) {
+                throw new \RuntimeException("Failed to retrieve updated tenant data");
+            }
+            
+            return $updatedTenant;
+            
+        } catch (\Exception $e) {
+            $this->logger->error("Failed to update tenant {$tenantId}: " . $e->getMessage());
+            throw new \RuntimeException("Failed to update tenant: " . $e->getMessage(), 0, $e);
+        }
+    }
 }
