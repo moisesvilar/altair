@@ -158,4 +158,46 @@ class SupabaseAuth implements Auth
 
         return $this->makeRequest('/verify', 'POST', $data);
     }
+
+    public function getUserById(string $userId): array
+    {
+        // Note: Supabase Auth API requires admin access to get user by ID
+        // This uses the admin endpoint which requires service_role key
+        $adminUrl = $this->supabaseUrl . '/auth/v1/admin/users/' . $userId;
+        
+        $headers = [
+            'apikey: ' . $this->supabaseKey,
+            'Authorization: Bearer ' . $this->supabaseKey,
+            'Content-Type: application/json',
+            'Accept: application/json'
+        ];
+
+        $ch = curl_init();
+        curl_setopt_array($ch, [
+            CURLOPT_URL => $adminUrl,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_HTTPHEADER => $headers,
+            CURLOPT_CUSTOMREQUEST => 'GET',
+            CURLOPT_SSL_VERIFYPEER => true,
+            CURLOPT_TIMEOUT => 30
+        ]);
+
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $error = curl_error($ch);
+        curl_close($ch);
+
+        if ($error) {
+            throw new \Exception("cURL error: " . $error);
+        }
+
+        $decodedResponse = json_decode($response, true);
+        
+        if ($httpCode >= 400) {
+            $message = $decodedResponse['message'] ?? $decodedResponse['error_description'] ?? 'Unknown error';
+            throw new \Exception("API error ({$httpCode}): " . $message);
+        }
+
+        return $decodedResponse ?? [];
+    }
 }

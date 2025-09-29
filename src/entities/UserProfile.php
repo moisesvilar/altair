@@ -14,7 +14,8 @@ final class UserProfile
         public readonly bool $isActive,
         public readonly string $createdAt,
         public readonly string $updatedAt,
-        public readonly ?int $tenantId
+        public readonly ?int $tenantId,
+        public readonly ?string $email = null
     ) {}
 
     /**
@@ -33,7 +34,8 @@ final class UserProfile
             isActive: (bool) ($data['is_active'] ?? true),
             createdAt: (string) $data['created_at'],
             updatedAt: (string) $data['updated_at'],
-            tenantId: isset($data['tenant_id']) ? (int) $data['tenant_id'] : null
+            tenantId: isset($data['tenant_id']) ? (int) $data['tenant_id'] : null,
+            email: $data['email'] ?? null
         );
     }
 
@@ -52,7 +54,8 @@ final class UserProfile
             'is_active' => $this->isActive,
             'created_at' => $this->createdAt,
             'updated_at' => $this->updatedAt,
-            'tenant_id' => $this->tenantId
+            'tenant_id' => $this->tenantId,
+            'email' => $this->email
         ];
     }
 

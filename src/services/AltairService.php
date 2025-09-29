@@ -131,4 +131,62 @@ class AltairService
             throw new \RuntimeException("Failed to set user extra info: " . $e->getMessage(), 0, $e);
         }
     }
+
+    /**
+     * Get complete user information combining auth and profile data
+     *
+     * @param string $userId User's UUID from Supabase Auth
+     * @return UserProfile|null Complete user profile with email or null if not found
+     * @throws \Exception If an error occurs during the operation
+     */
+    public function getUserInfo(string $userId): ?UserProfile
+    {
+        try {
+            $this->logger->info("Getting complete user info for user: {$userId}");
+            
+            // Get user data from Supabase Auth to obtain email
+            $authUser = $this->authService->getUserById($userId);
+            
+            if (empty($authUser) || !isset($authUser['email'])) {
+                $this->logger->warning("No auth user found for user ID: {$userId}");
+                return null;
+            }
+            
+            $email = $authUser['email'];
+            
+            // Get profile data from profiles table
+            $profileQuery = "SELECT * FROM profiles WHERE user_id = :user_id LIMIT 1";
+            $profileResult = $this->databaseService->query($profileQuery, ['user_id' => $userId]);
+            
+            if (empty($profileResult)) {
+                $this->logger->info("No profile found for user: {$userId}, creating minimal profile with email");
+                
+                // Create a minimal profile structure if no profile exists in the database
+                $minimalProfile = [
+                    'id' => 0, // Temporary ID for non-existing profile
+                    'user_id' => $userId,
+                    'first_name' => null,
+                    'last_name' => null,
+                    'is_active' => true,
+                    'created_at' => date('Y-m-d H:i:s'),
+                    'updated_at' => date('Y-m-d H:i:s'),
+                    'tenant_id' => null,
+                    'email' => $email
+                ];
+                
+                return UserProfile::fromArray($minimalProfile);
+            }
+            
+            // Create UserProfile with email from auth data
+            $userProfile = UserProfile::fromArray($profileResult[0]);
+            
+            $this->logger->info("Complete user info retrieved successfully for user: {$userId}");
+            
+            return $userProfile;
+            
+        } catch (\Exception $e) {
+            $this->logger->error("Failed to get user info for user {$userId}: " . $e->getMessage());
+            throw new \RuntimeException("Failed to get user info: " . $e->getMessage(), 0, $e);
+        }
+    }
 }

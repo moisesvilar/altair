@@ -80,6 +80,11 @@ class AuthService
         return $this->auth->verify($token, $type);
     }
 
+    public function getUserById(string $userId): array
+    {
+        return $this->auth->getUserById($userId);
+    }
+
     // Additional utility methods
     public function isTokenExpired(AuthResult $authResult): bool
     {
