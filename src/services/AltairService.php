@@ -6,7 +6,7 @@ use Altair\AuthService;
 use Altair\DatabaseService;
 use Utils\Logger;
 
-class AltairDatabase
+class AltairService
 {
     private AuthService $authService;
     private DatabaseService $databaseService;
