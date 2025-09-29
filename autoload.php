@@ -57,7 +57,7 @@ spl_autoload_register(function ($class) {
 
 // Autoloader for your project classes
 spl_autoload_register(function ($class) {
-    $prefix = 'MiProyecto\\';
+    $prefix = 'Altair\\';
     $base_dir = __DIR__ . '/src/';
 
     $len = strlen($prefix);

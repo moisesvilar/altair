@@ -2,7 +2,7 @@
 
 require_once '../autoload.php';
 
-use MiProyecto\DatabaseService;
+use Altair\DatabaseService;
 
 try {
     // Get database service

@@ -1,6 +1,6 @@
 <?php
 
-namespace MiProyecto;
+namespace Altair;
 
 use AuthLibrary\SupabaseAuth;
 use Utils\EnvLoader;

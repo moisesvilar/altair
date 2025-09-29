@@ -1,6 +1,6 @@
 <?php
 
-namespace MiProyecto;
+namespace Altair;
 
 use DatabaseLibrary\DatabaseManager;
 use Utils\EnvLoader;

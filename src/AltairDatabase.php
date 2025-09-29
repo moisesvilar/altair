@@ -1,9 +1,9 @@
 <?php
 
-namespace MiProyecto;
+namespace Altair;
 
-use MiProyecto\AuthService;
-use MiProyecto\DatabaseService;
+use Altair\AuthService;
+use Altair\DatabaseService;
 use Utils\Logger;
 
 class AltairDatabase
