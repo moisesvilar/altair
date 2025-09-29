@@ -34,13 +34,13 @@ class AltairDatabase
     }
 
     /**
-     * Registra un usuario contra Supabase
+     * Registers a user against Supabase
      *
-     * @param string $email Email del usuario
-     * @param string $password Contraseña del usuario
-     * @param array $metadata Metadatos adicionales (opcional)
-     * @return array Respuesta de Supabase con los datos del usuario registrado
-     * @throws \Exception Si ocurre un error durante el registro
+     * @param string $email User's email
+     * @param string $password User's password
+     * @param array $metadata Additional metadata (optional)
+     * @return array Supabase response with registered user data
+     * @throws \Exception If an error occurs during registration
      */
     public function signUp(string $email, string $password, array $metadata = []): array
     {
