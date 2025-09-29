@@ -268,4 +268,36 @@ class AltairService
             throw new \RuntimeException("Failed to create tenant: " . $e->getMessage(), 0, $e);
         }
     }
+
+    /**
+     * Get tenant data by ID
+     *
+     * @param int $tenantId Tenant ID
+     * @return Tenant|null Tenant data or null if not found
+     * @throws \Exception If an error occurs during the operation
+     */
+    public function getTenantById(int $tenantId): ?Tenant
+    {
+        try {
+            $this->logger->info("Getting tenant data for ID: {$tenantId}");
+            
+            $tenantQuery = "SELECT * FROM tenants WHERE id = :id LIMIT 1";
+            $tenantResult = $this->databaseService->query($tenantQuery, ['id' => $tenantId]);
+            
+            if (empty($tenantResult)) {
+                $this->logger->warning("No tenant found with ID: {$tenantId}");
+                return null;
+            }
+            
+            $tenant = Tenant::fromArray($tenantResult[0]);
+            
+            $this->logger->info("Tenant data retrieved successfully for ID: {$tenantId}");
+            
+            return $tenant;
+            
+        } catch (\Exception $e) {
+            $this->logger->error("Failed to get tenant with ID {$tenantId}: " . $e->getMessage());
+            throw new \RuntimeException("Failed to get tenant: " . $e->getMessage(), 0, $e);
+        }
+    }
 }

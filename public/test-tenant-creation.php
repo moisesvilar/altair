@@ -41,22 +41,33 @@ try {
     
     $tenant = $altairService->createTenant($tenantName, $userId);
     
-    echo "✓ Tenant creado exitosamente\n\n";
+    echo "✓ Tenant creado exitosamente\n";
+    echo "   ID del tenant creado: {$tenant->id}\n\n";
+
+    // Get tenant data using the new method
+    echo "4. Obteniendo datos del tenant creado usando getTenantById...\n";
+    $retrievedTenant = $altairService->getTenantById($tenant->id);
+    
+    if ($retrievedTenant === null) {
+        throw new \Exception("No se pudo obtener el tenant con ID: {$tenant->id}");
+    }
+    
+    echo "✓ Datos del tenant obtenidos exitosamente\n\n";
 
     // Display tenant data
-    echo "4. DATOS DEL TENANT CREADO:\n";
+    echo "5. DATOS DEL TENANT OBTENIDO:\n";
     echo "========================================\n";
-    echo "ID: {$tenant->id}\n";
-    echo "Nombre: {$tenant->name}\n";
-    echo "Slug: {$tenant->slug}\n";
-    echo "Creado en: {$tenant->createdAt}\n";
-    echo "Actualizado en: {$tenant->updatedAt}\n";
-    echo "Creado por: {$tenant->createdBy}\n";
+    echo "ID: {$retrievedTenant->id}\n";
+    echo "Nombre: {$retrievedTenant->name}\n";
+    echo "Slug: {$retrievedTenant->slug}\n";
+    echo "Creado en: {$retrievedTenant->createdAt}\n";
+    echo "Actualizado en: {$retrievedTenant->updatedAt}\n";
+    echo "Creado por: {$retrievedTenant->createdBy}\n";
     echo "========================================\n\n";
 
     // Convert to array and display formatted
-    echo "5. DATOS EN FORMATO ARRAY:\n";
-    $tenantArray = $tenant->toArray();
+    echo "6. DATOS EN FORMATO ARRAY:\n";
+    $tenantArray = $retrievedTenant->toArray();
     echo json_encode($tenantArray, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . "\n\n";
 
     echo "✓ Prueba completada exitosamente\n";
