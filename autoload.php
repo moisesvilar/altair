@@ -73,7 +73,8 @@ spl_autoload_register(function ($class) {
         'AuthService' => 'services/AuthService.php', 
         'DatabaseService' => 'services/DatabaseService.php',
         'UserProfile' => 'entities/UserProfile.php',
-        'AuthResult' => 'entities/AuthResult.php'
+        'AuthResult' => 'entities/AuthResult.php',
+        'Tenant' => 'entities/Tenant.php'
     ];
     
     // Check if class is in our map

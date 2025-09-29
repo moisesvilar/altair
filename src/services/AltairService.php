@@ -4,6 +4,7 @@ namespace Altair;
 
 use Altair\AuthService;
 use Altair\DatabaseService;
+use Altair\Tenant;
 use Utils\Logger;
 
 class AltairService
@@ -214,6 +215,57 @@ class AltairService
         } catch (\Exception $e) {
             $this->logger->error("Failed to get user info for user {$userId}: " . $e->getMessage());
             throw new \RuntimeException("Failed to get user info: " . $e->getMessage(), 0, $e);
+        }
+    }
+
+    /**
+     * Create a new tenant in the database
+     *
+     * @param string $name Tenant name (required)
+     * @param string $createdBy User UUID who creates the tenant (required)
+     * @return Tenant Created tenant data
+     * @throws \Exception If an error occurs during tenant creation
+     */
+    public function createTenant(string $name, string $createdBy): Tenant
+    {
+        try {
+            $this->logger->info("Creating new tenant with name: {$name} by user: {$createdBy}");
+            
+            // Generate slug automatically from name
+            $slug = Tenant::generateSlug($name);
+            
+            // Check if slug already exists
+            $existingTenantQuery = "SELECT id FROM tenants WHERE slug = :slug LIMIT 1";
+            $existingTenant = $this->databaseService->query($existingTenantQuery, ['slug' => $slug]);
+            
+            if (!empty($existingTenant)) {
+                throw new \RuntimeException("A tenant with slug '{$slug}' already exists");
+            }
+            
+            // Prepare tenant data
+            $currentTime = date('Y-m-d H:i:s');
+            $tenantData = [
+                'name' => $name,
+                'slug' => $slug,
+                'created_at' => $currentTime,
+                'updated_at' => $currentTime,
+                'created_by' => $createdBy
+            ];
+            
+            // Insert new tenant
+            $insertedId = $this->databaseService->insert('tenants', $tenantData);
+            
+            $this->logger->info("Created new tenant: {$name} with ID: {$insertedId} and slug: {$slug}");
+            
+            // Get created tenant
+            $newTenantQuery = "SELECT * FROM tenants WHERE id = :id LIMIT 1";
+            $newTenant = $this->databaseService->query($newTenantQuery, ['id' => $insertedId]);
+            
+            return Tenant::fromArray($newTenant[0]);
+            
+        } catch (\Exception $e) {
+            $this->logger->error("Failed to create tenant '{$name}': " . $e->getMessage());
+            throw new \RuntimeException("Failed to create tenant: " . $e->getMessage(), 0, $e);
         }
     }
 }

@@ -44,9 +44,21 @@ class DatabaseService
 
     public function insert(string $table, array $data): int
     {
-        $queryBuilder = $this->db->queryBuilder($table);
-        $query = $queryBuilder->buildInsert($data);
-        return $this->db->executeInsert($query, $queryBuilder->getParams());
+        // Use Supabase-specific query builder with RETURNING clause
+        $queryBuilder = $this->db->supabaseQueryBuilder($table);
+        $query = $queryBuilder->buildInsertWithReturning($data, ['id']);
+        $result = $this->db->executeQuery($query, $queryBuilder->getParams());
+        
+        if (!empty($result) && isset($result[0]['id'])) {
+            return (int) $result[0]['id'];
+        }
+        
+        // Fallback: try with standard query builder and lastInsertId
+        $standardQueryBuilder = $this->db->queryBuilder($table);
+        $standardQuery = $standardQueryBuilder->buildInsert($data);
+        $this->db->executeInsert($standardQuery, $standardQueryBuilder->getParams());
+        
+        return (int) $this->db->getLastInsertId();
     }
 
     public function update(string $table, array $data, array $conditions): int
