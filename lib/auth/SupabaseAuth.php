@@ -2,6 +2,8 @@
 
 namespace AuthLibrary;
 
+use Altair\AuthResult;
+
 class SupabaseAuth implements Auth
 {
     private string $supabaseUrl;
@@ -73,7 +75,7 @@ class SupabaseAuth implements Auth
         return $decodedResponse ?? [];
     }
 
-    public function signUp(string $email, string $password, array $metadata = []): array
+    public function signUp(string $email, string $password, array $metadata = []): AuthResult
     {
         $data = [
             'email' => $email,
@@ -84,7 +86,8 @@ class SupabaseAuth implements Auth
             $data['data'] = $metadata;
         }
 
-        return $this->makeRequest('/signup', 'POST', $data);
+        $response = $this->makeRequest('/signup', 'POST', $data);
+        return AuthResult::fromArray($response);
     }
 
     public function signIn(string $email, string $password): array

@@ -45,7 +45,7 @@ class AuthService
     }
 
     // Convenience methods that delegate to SupabaseAuth
-    public function signUp(string $email, string $password, array $metadata = []): array
+    public function signUp(string $email, string $password, array $metadata = []): AuthResult
     {
         return $this->auth->signUp($email, $password, $metadata);
     }
@@ -81,22 +81,14 @@ class AuthService
     }
 
     // Additional utility methods
-    public function isTokenExpired(array $tokenData): bool
+    public function isTokenExpired(AuthResult $authResult): bool
     {
-        if (!isset($tokenData['expires_at'])) {
-            return true;
-        }
-        
-        return time() >= $tokenData['expires_at'];
+        return $authResult->isTokenExpired();
     }
 
-    public function shouldRefreshToken(array $tokenData): bool
+    public function shouldRefreshToken(AuthResult $authResult): bool
     {
-        if (!isset($tokenData['expires_at'])) {
-            return true;
-        }
-        
         $refreshThreshold = $this->config['session']['refresh_threshold'];
-        return time() >= ($tokenData['expires_at'] - $refreshThreshold);
+        return $authResult->shouldRefreshToken($refreshThreshold);
     }
 }

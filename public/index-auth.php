@@ -48,14 +48,14 @@ try {
             'role' => 'user'
         ]);
         
-        $logger->info("User registration successful", $signUpResult);
+        $logger->info("User registration successful", $signUpResult->toArray());
         echo "User registered successfully\n";
-        echo "User ID: " . ($signUpResult['user']['id'] ?? 'N/A') . "\n";
-        echo "Email: " . ($signUpResult['user']['email'] ?? 'N/A') . "\n";
+        echo "User ID: " . $signUpResult->id . "\n";
+        echo "Email: " . $signUpResult->email . "\n";
         
         // Store access token for further tests
-        $accessToken = $signUpResult['access_token'] ?? null;
-        $refreshToken = $signUpResult['refresh_token'] ?? null;
+        $accessToken = $signUpResult->accessToken;
+        $refreshToken = $signUpResult->refreshToken;
         
         if ($accessToken) {
             echo "\n=== Testing Get User Info ===\n";

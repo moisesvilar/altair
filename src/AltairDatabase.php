@@ -39,10 +39,10 @@ class AltairDatabase
      * @param string $email User's email
      * @param string $password User's password
      * @param array $metadata Additional metadata (optional)
-     * @return array Supabase response with registered user data
+     * @return AuthResult Supabase response with registered user data
      * @throws \Exception If an error occurs during registration
      */
-    public function signUp(string $email, string $password, array $metadata = []): array
+    public function signUp(string $email, string $password, array $metadata = []): AuthResult
     {
         try {
             $this->logger->info("Attempting to sign up user with email: {$email}");

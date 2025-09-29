@@ -2,6 +2,8 @@
 
 namespace AuthLibrary;
 
+use Altair\AuthResult;
+
 interface Auth
 {
     /**
@@ -10,9 +12,9 @@ interface Auth
      * @param string $email User's email address
      * @param string $password User's password
      * @param array $metadata Additional user metadata (optional)
-     * @return array User data and authentication tokens
+     * @return AuthResult User data and authentication tokens
      */
-    public function signUp(string $email, string $password, array $metadata = []): array;
+    public function signUp(string $email, string $password, array $metadata = []): AuthResult;
 
     /**
      * Sign in an existing user
