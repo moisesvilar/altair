@@ -70,9 +70,9 @@ class AuthService
         return $this->auth->refreshToken($refreshToken);
     }
 
-    public function resetPassword(string $email): bool
+    public function resetPassword(string $email, ?string $redirectTo = null): bool
     {
-        return $this->auth->resetPassword($email);
+        return $this->auth->resetPassword($email, $redirectTo);
     }
 
     public function verify(string $token, string $type = 'signup'): array

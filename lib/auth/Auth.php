@@ -51,9 +51,10 @@ interface Auth
      * Send password reset email to user
      *
      * @param string $email User's email address
+     * @param string|null $redirectTo Optional redirect URL after password reset
      * @return bool Success status
      */
-    public function resetPassword(string $email): bool;
+    public function resetPassword(string $email, ?string $redirectTo = null): bool;
 
     /**
      * Verify user account or password reset token

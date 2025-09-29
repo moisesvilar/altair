@@ -125,16 +125,23 @@ class SupabaseAuth implements Auth
         return $this->makeRequest('/token?grant_type=refresh_token', 'POST', $data);
     }
 
-    public function resetPassword(string $email): bool
+    public function resetPassword(string $email, ?string $redirectTo = null): bool
     {
         try {
             $data = [
                 'email' => $email
             ];
+            
+            // Add redirect URL if provided (required by some Supabase configurations)
+            if ($redirectTo) {
+                $data['redirect_to'] = $redirectTo;
+            }
 
             $this->makeRequest('/recover', 'POST', $data);
             return true;
         } catch (\Exception $e) {
+            // Log the error with more details for debugging
+            error_log("Password reset failed for email: $email, Error: " . $e->getMessage());
             return false;
         }
     }

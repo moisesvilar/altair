@@ -6,7 +6,7 @@ class EnvLoader
 {
     private static $loaded = false;
     
-    public static function load(string $path = null): void
+    public static function load(?string $path = null): void
     {
         if (self::$loaded) {
             return;
