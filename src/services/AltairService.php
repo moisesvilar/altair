@@ -5,6 +5,7 @@ namespace Altair;
 use Altair\AuthService;
 use Altair\DatabaseService;
 use Altair\Tenant;
+use Altair\Feature;
 use Utils\Logger;
 
 class AltairService
@@ -362,6 +363,54 @@ class AltairService
         } catch (\Exception $e) {
             $this->logger->error("Failed to update tenant {$tenantId}: " . $e->getMessage());
             throw new \RuntimeException("Failed to update tenant: " . $e->getMessage(), 0, $e);
+        }
+    }
+
+    /**
+     * Get activated features for a specific tenant
+     *
+     * @param int $tenantId Tenant ID to get features for
+     * @return Feature[] Array of Feature entities
+     * @throws \Exception If an error occurs during the operation
+     */
+    public function getTenantFeatures(int $tenantId): array
+    {
+        try {
+            $this->logger->info("Getting activated features for tenant ID: {$tenantId}");
+            
+            // Query to get features activated for the tenant
+            $featuresQuery = "
+                SELECT 
+                    ff.id,
+                    ff.tenant as tenant_id,
+                    f.ref,
+                    ff.expiration_date
+                FROM features f
+                INNER JOIN feature_flags ff ON ff.feature = f.ref
+                WHERE ff.tenant = :tenant_id
+                ORDER BY f.ref
+            ";
+            
+            $featuresResult = $this->databaseService->query($featuresQuery, ['tenant_id' => $tenantId]);
+            
+            if (empty($featuresResult)) {
+                $this->logger->info("No activated features found for tenant ID: {$tenantId}");
+                return [];
+            }
+            
+            $this->logger->info("Found " . count($featuresResult) . " activated features for tenant ID: {$tenantId}");
+            
+            // Convert results to Feature entities
+            $features = [];
+            foreach ($featuresResult as $featureData) {
+                $features[] = Feature::fromArray($featureData);
+            }
+            
+            return $features;
+            
+        } catch (\Exception $e) {
+            $this->logger->error("Failed to get features for tenant {$tenantId}: " . $e->getMessage());
+            throw new \RuntimeException("Failed to get tenant features: " . $e->getMessage(), 0, $e);
         }
     }
 }
